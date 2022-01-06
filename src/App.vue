@@ -2,23 +2,30 @@
 <div class="container">
   <list-title></list-title>
   <section>
-    <input type="text" v-model="msg" @keyup.enter="createTodo"
-    @input="onCreateTodo" placeholder="Keep it!...">
-    <todo-list :items="items"></todo-list>
+    <input type="text" v-model="msg" @keyup.enter="createItem"
+    @input="onCreateItem" placeholder="Keep it!...">
+    <todo-list ref="todo"></todo-list>
   </section>
   <div class="insetshadow"></div>
 </div>
 </template>
-
+s
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import { ref,reactive } from 'vue'
+import { ref,onMounted } from 'vue'
 import TodoList from './components/TodoList.vue'
 import ListTitle from './components/ListTitle.vue'
 const msg = ref('')
-const items = reactive([{id:0,content:'do my homework',isFinished:false,isCreated:true},{id:1,content:'do the laundry',isFinished:true,isCreated:true}])
-const onCreateTodo = () => {
+const todo = ref()
+onMounted(() => {
+  todo.value.loadLocalStorage()
+  // console.log(todo.value.items)
+  if(todo.value.items[0] && todo.value.items[0].isCreated === false){
+    todo.value.items.shift()
+  }//delete the unUncreated
+    todo.value.refreshLocalStorage()
+})
+const onCreateItem = () => {
+  const items = todo.value.items
   if(items.length){
     if(!items[0].isCreated){
       items[0].content = msg.value
@@ -28,11 +35,11 @@ const onCreateTodo = () => {
   }else{
     items.unshift({id:items.length,content:msg.value,isFinished:false,isCreated:false})
   }
-
 }
-const createTodo = ()=>{
-  items[0].isCreated = true
+const createItem = ()=>{
+  todo.value.items[0].isCreated = true
   msg.value = ''
+  todo.value.refreshLocalStorage()
 }
 </script>
 

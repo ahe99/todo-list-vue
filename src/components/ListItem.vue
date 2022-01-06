@@ -1,30 +1,29 @@
 <template>
   <li class="listitem"
   :class='{preview:!item.isCreated}' 
-  @click="item.isFinished = !item.isFinished"> 
+  @click="$emit('finish')"> 
     <p :class='{finished:item.isFinished}' v-if="!onEdit">
       {{item.content}}
     </p>
-    <input type="text" v-model="msg" @keyup.enter="editItemText" v-else>
-    <item-tool @edit='editItem' @delete="$emit('delete')" v-if="!onEdit"></item-tool>
+    <input type="text" v-model="msg" @keyup.enter="submitEditItem" v-else>
+    <item-tool @edit='onEditItem' @delete="$emit('delete')" v-if="!onEdit"></item-tool>
   </li>
-
 </template>
 
 <script setup>
-import { ref,defineProps } from 'vue'
+import { ref } from 'vue'
 import ItemTool from './ItemTool.vue'
 
+const emit = defineEmits(['edit','finish'])
 const props = defineProps({
   item: Object})
 const onEdit = ref(false)
 const msg = ref('')
-const editItem = () => {
+const onEditItem = () => {
   onEdit.value = true;  
 }
-const editItemText = () => {
-  props.item.content = msg.value
-  props.item.isFinished = false
+const submitEditItem = () => {
+  emit('edit',msg.value)
   msg.value = ''
   onEdit.value = false;
 }

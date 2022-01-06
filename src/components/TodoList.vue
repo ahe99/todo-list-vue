@@ -12,7 +12,7 @@ import {ref,reactive,defineExpose} from 'vue'
 const items = reactive([])
 const loadLocalStorage = ()=>{
   const itemList = JSON.parse(window.localStorage.getItem('itemList'))
-  if(itemList.length !== 0){//already have some
+  if(itemList && itemList.length !== 0){//already have some
     const itemList = JSON.parse(window.localStorage.getItem('itemList'))
     for(let item of itemList){
       items.push(item)
